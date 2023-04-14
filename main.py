@@ -1,34 +1,28 @@
 from flask import Flask, jsonify, request
-import nltk
+from preprocess import preprocess
 
-nltk.download('punkt')
-nltk.download('stopwords')
-
-from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
+import joblib
 
 app = Flask(__name__)
+
+clf = joblib.load('classifier.pkl')
+vectorizer = joblib.load('vectorizer.pkl')
+
+prediction_cache = {}
 
 @app.route('/classify', methods=['POST'])
 def classify():
     sms = request.json['text']
-    preprocessed_sms = __preprocess(sms)
 
-    # just return preprocessed text for now
-    return jsonify({'word': preprocessed_sms})
+    if sms in prediction_cache:
+        prediction = prediction_cache[sms]
+    else:
+        preprocessed_sms = preprocess(sms)
+        vectorized_text = vectorizer.transform([preprocessed_sms])
+        prediction = clf.predict(vectorized_text)[0]
+        prediction_cache[sms] = prediction
 
-def __preprocess(sms):
-    text = sms.lower()
-    words = nltk.word_tokenize(text)
-
-    stop_words = set(stopwords.words('english'))
-    words = [w for w in words if w not in stop_words]
-
-    stemmer = PorterStemmer()
-    words = [stemmer.stem(w) for w in words]
-
-    return ' '.join(words)
-
+    return jsonify({'result': prediction})
 
 if __name__ == '__main__':
     app.run()

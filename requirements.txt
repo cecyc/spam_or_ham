@@ -1,5 +1,6 @@
 flask
 joblib
 nltk
+numpy
 pandas
 sklearn
