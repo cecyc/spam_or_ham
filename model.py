@@ -9,7 +9,7 @@ from preprocess import preprocess
 CSV_URL = 'https://raw.githubusercontent.com/cecyc/spam_or_ham/main/data/sms_spam.csv'
 
 
-if __name__ == '__main__':
+def load_model():
     data = pd.read_csv(CSV_URL)
 
     # Split the data into test and train

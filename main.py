@@ -2,9 +2,11 @@ from flask import Flask, request, render_template
 from preprocess import preprocess
 
 import joblib
+import model
 
 app = Flask(__name__)
 
+model.load_model()
 clf = joblib.load('classifier.pkl')
 vectorizer = joblib.load('vectorizer.pkl')
 
