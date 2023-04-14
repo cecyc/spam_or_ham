@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <div class="container">
+      <h1>Spam or Ham?</h1>
+      <span>🚫 / 🐷</span>
+
+      <form action="{{ url_for('classify') }}" method="POST">
+        <label for="text">Enter SMS message:</label>
+        <input type="text" name="text" id="text">
+        <button type="submit">classify</button>
+      </form>
+
+      <div class="result">
+        {% if result %}
+          <p><strong>Your text:</strong><br>{{ sms }}</p>
+          <p><strong>Classification result:</strong> {{ result }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>

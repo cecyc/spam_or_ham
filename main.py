@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, request, render_template
 from preprocess import preprocess
 
 import joblib
@@ -10,9 +10,13 @@ vectorizer = joblib.load('vectorizer.pkl')
 
 prediction_cache = {}
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
 @app.route('/classify', methods=['POST'])
 def classify():
-    sms = request.json['text']
+    sms = request.form['text']
 
     if sms in prediction_cache:
         prediction = prediction_cache[sms]
@@ -22,7 +26,7 @@ def classify():
         prediction = clf.predict(vectorized_text)[0]
         prediction_cache[sms] = prediction
 
-    return jsonify({'result': prediction})
+    return render_template('index.html', result=prediction, sms=sms)
 
 if __name__ == '__main__':
     app.run()
